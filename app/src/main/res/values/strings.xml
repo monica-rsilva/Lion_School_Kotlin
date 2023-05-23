@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Lion School</string>
+    <string name="description">choose a course for to manage</string>
+    <string name="sigla_course"></string>
+</resources>
