@@ -1,17 +1,17 @@
 package br.senai.sp.jandira.lionschool
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,7 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.senai.sp.jandira.lionschool.model.Course
+import br.senai.sp.jandira.lionschool.model.CourseList
+import br.senai.sp.jandira.lionschool.service.RetrofitFactory
 import br.senai.sp.jandira.lionschool.ui.theme.LionSchoolTheme
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +49,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CoursesScreen() {
+
+    var course by remember{
+        mutableStateOf(listOf<Course>())
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row (
@@ -80,40 +90,44 @@ fun CoursesScreen() {
             )
             Card(
                 modifier = Modifier
-                    .fillMaxSize(),
-                shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
+                    .fillMaxSize()
+                    ,
+                shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp),
+                elevation = 100.dp
             ) {
-                Column(modifier = Modifier
-                    .border(BorderStroke(2.dp,Color.Red))
-                    .background(Brush.verticalGradient
-                        (colors = listOf(Color(255,255,255),
-                                         Color(49,121,179))
-                        )
+
+                LazyColumn(modifier = Modifier
+                    .background(Brush.verticalGradient(
+                        colors = listOf(Color(255,255,255),Color(49,121,179)
+                        ))
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                ) {
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ){
 
-                    Button(
-                        modifier = Modifier
+                    val call = RetrofitFactory().getCourseService().getCourse()
+
+                    call.enqueue(object : Callback<CourseList>{
+                        override fun onResponse(
+                            call: Call<CourseList>,
+                            response: Response<CourseList>
+                        ) {
+                            course = response.body()!!.course
+                        }
+
+                        override fun onFailure(call: Call<CourseList>, t: Throwable) {
+                            Log.i("ds2m","onFailure: ${t.message}")
+                        }
+                    })
+                    items(course){
+                        Button(modifier = Modifier
                             .width(250.dp)
                             .height(80.dp),
                         shape = RoundedCornerShape(25.dp),
-                        colors = ButtonDefaults.buttonColors(Color(49,121,179)),
-                        onClick = { /*TODO*/ }
-                    ) {
-
-                    }
-
-                    Button(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(80.dp),
-                        shape = RoundedCornerShape(25.dp),
-                        colors = ButtonDefaults.buttonColors(Color(49,121,179)),
-                        onClick = { /*TODO*/ }
-                    ) {
-
+                        colors = ButtonDefaults.buttonColors(Color(49,121,179)),onClick = { /*TODO*/ }) {
+                            Text(text = it.sigla, fontSize = 30.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
+                            Text(text = it.nome.slice(6 until 38), fontSize = 12.sp, fontWeight = FontWeight.ExtraLight, color = Color.White)
+                        }
                     }
                 }
             }
