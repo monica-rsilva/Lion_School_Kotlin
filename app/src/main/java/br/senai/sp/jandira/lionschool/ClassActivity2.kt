@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +23,7 @@ import br.senai.sp.jandira.lionschool.model.Student
 import br.senai.sp.jandira.lionschool.model.StudentList
 import br.senai.sp.jandira.lionschool.service.RetrofitFactory
 import br.senai.sp.jandira.lionschool.ui.theme.LionSchoolTheme
+import coil.compose.AsyncImage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,7 +61,7 @@ fun ClassScreen() {
            ) {
        }
         
-       LazyColumn(modifier = Modifier.fillMaxSize()){
+       LazyColumn(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly){
            val call = RetrofitFactory().getCourseService().getStudentsByCourse()
 
            call.enqueue(object : Callback<StudentList>{
@@ -75,9 +77,18 @@ fun ClassScreen() {
            })
 
            items(student){
-               Card(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-                   Text(text = it.name, fontSize = 18.sp)
-                   Text(text = it.status, fontSize = 18.sp)
+               Card(modifier = Modifier
+                   .width(200.dp)
+                   .height(300.dp)
+                   .padding(8.dp), backgroundColor = Color.Yellow) {
+                   Column() {
+                       Card(modifier = Modifier.fillMaxWidth()) {
+                        AsyncImage(model = it.photo, contentDescription = "student", modifier = Modifier.size(80.dp))
+                       }
+                       Text(text = it.name, fontSize = 18.sp)
+                       Text(text = it.status, fontSize = 18.sp)
+                   }
+
                }
            }
        }
