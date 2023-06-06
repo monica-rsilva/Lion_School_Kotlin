@@ -2,4 +2,5 @@
     <string name="app_name">Lion School</string>
     <string name="description">choose a course for to manage</string>
     <string name="sigla_course"></string>
+    <string name="title_activity_class2">ClassActivity2</string>
 </resources>

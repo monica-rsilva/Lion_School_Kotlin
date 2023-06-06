@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.lionschool
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +55,8 @@ fun CoursesScreen() {
     var course by remember{
         mutableStateOf(listOf<Course>())
     }
+
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row (
@@ -124,9 +128,12 @@ fun CoursesScreen() {
                             .width(250.dp)
                             .height(80.dp),
                         shape = RoundedCornerShape(25.dp),
-                        colors = ButtonDefaults.buttonColors(Color(49,121,179)),onClick = { /*TODO*/ }) {
+                        colors = ButtonDefaults.buttonColors(Color(49,121,179)),
+                            onClick = { val openOther = Intent(context, ClassActivity2::class.java)
+                                context.startActivity(openOther)
+                            }) {
                             Text(text = it.sigla, fontSize = 30.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
-                            Text(text = it.nome.slice(6 until 38), fontSize = 12.sp, fontWeight = FontWeight.ExtraLight, color = Color.White)
+//                            Text(text = it.nome.slice(6 until 38), fontSize = 12.sp, fontWeight = FontWeight.ExtraLight, color = Color.White)
                         }
                     }
                 }
